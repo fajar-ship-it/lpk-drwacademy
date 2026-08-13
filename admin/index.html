@@ -143,6 +143,7 @@
   var adminKosong = document.getElementById("admin-kosong");
 
   var dataPendaftar = [];
+  var KUNCI_LOGIN = "drw_admin_password";
 
   function formatTanggal(iso) {
     if (!iso) return "-";
@@ -210,6 +211,9 @@
       .then(function (res) {
         if (res.berhasil) {
           dataPendaftar = res.data || [];
+          try {
+            localStorage.setItem(KUNCI_LOGIN, password);
+          } catch (e) {}
           panelLogin.style.display = "none";
           panelData.style.display = "block";
           renderTabel();
@@ -232,6 +236,9 @@
   btnKeluar.addEventListener("click", function () {
     dataPendaftar = [];
     inputPassword.value = "";
+    try {
+      localStorage.removeItem(KUNCI_LOGIN);
+    } catch (e) {}
     loginStatus.className = "form-status";
     loginStatus.textContent = "";
     panelData.style.display = "none";
@@ -242,6 +249,17 @@
 
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  (function cobaLoginOtomatis() {
+    var tersimpan = null;
+    try {
+      tersimpan = localStorage.getItem(KUNCI_LOGIN);
+    } catch (e) {}
+    if (tersimpan) {
+      inputPassword.value = tersimpan;
+      ambilData();
+    }
+  })();
 })();
 </script>
 </body>
