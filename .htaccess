@@ -1,0 +1,11 @@
+DirectoryIndex index.html
+
+# Redirect URL lama WordPress
+Redirect 301 /my-account/ /contact/
+Redirect 301 /instructors/ /about-us/
+Redirect 301 /about/ /about-us/
+
+# Redirect index.php ke root
+RedirectMatch 301 ^/index\.php$ /
+
+ErrorDocument 404 /index.html

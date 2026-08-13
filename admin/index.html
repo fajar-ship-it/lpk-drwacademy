@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Pendaftaran — LPK DRW Academy</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+  <style>
+    .admin-login {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 40px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+    .admin-login input {
+      width: 100%;
+      margin: 12px 0 16px;
+    }
+    .admin-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .admin-head h2 { font-size: 26px; }
+    .admin-info { font-size: 14px; color: var(--body); margin-bottom: 16px; }
+    .admin-table-wrap { overflow-x: auto; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      font-size: 14px;
+    }
+    .admin-table th,
+    .admin-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--light);
+      vertical-align: top;
+    }
+    .admin-table th {
+      background: var(--primary);
+      color: var(--white);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-empty {
+      text-align: center;
+      padding: 48px 0;
+      color: var(--body);
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header" data-transparent="false">
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="LPK DRW Academy">
+      <img src="../assets/img/logo.png" alt="Logo LPK DRW Academy">
+    </a>
+  </div>
+</header>
+
+<main class="section" style="padding: 60px 0;">
+  <div class="container">
+
+    <div class="admin-login" id="panel-login">
+      <h2 style="margin-bottom: 8px;">Admin Pendaftaran</h2>
+      <p style="margin-bottom: 16px; font-size: 15px;">Masukkan password untuk melihat data pendaftar.</p>
+      <input type="password" id="input-password" placeholder="Password" style="display:block; width:100%; padding:12px 14px; border:1px solid var(--border); border-radius: var(--radius); font-family:inherit; font-size:15px;">
+      <div id="login-status" class="form-status"></div>
+      <button class="btn" id="btn-login">Masuk</button>
+    </div>
+
+    <div id="panel-data" style="display: none;">
+      <div class="admin-head">
+        <h2>Data Pendaftar</h2>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="btn-ekspor">Export CSV</button>
+          <button class="btn btn-magenta" id="btn-keluar">Keluar</button>
+        </div>
+      </div>
+      <p class="admin-info" id="admin-info"></p>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama</th>
+              <th>WhatsApp</th>
+              <th>Email</th>
+              <th>Program</th>
+              <th>Paket</th>
+              <th>Alamat</th>
+              <th>Pesan</th>
+              <th>Dibuat Pada</th>
+            </tr>
+          </thead>
+          <tbody id="tabel-body"></tbody>
+        </table>
+      </div>
+      <p class="admin-empty" id="admin-kosong" style="display:none;">Belum ada data pendaftar.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-bottom">
+    <div class="container">
+      Copyright © <span id="year">2026</span> &nbsp; Support By DRW Skincare
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var panelLogin = document.getElementById("panel-login");
+  var panelData = document.getElementById("panel-data");
+  var inputPassword = document.getElementById("input-password");
+  var loginStatus = document.getElementById("login-status");
+  var btnLogin = document.getElementById("btn-login");
+  var btnEkspor = document.getElementById("btn-ekspor");
+  var btnKeluar = document.getElementById("btn-keluar");
+  var tabelBody = document.getElementById("tabel-body");
+  var adminInfo = document.getElementById("admin-info");
+  var adminKosong = document.getElementById("admin-kosong");
+
+  var dataPendaftar = [];
+
+  function formatTanggal(iso) {
+    if (!iso) return "-";
+    var d = new Date(iso);
+    return d.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function renderTabel() {
+    tabelBody.innerHTML = "";
+    if (!dataPendaftar.length) {
+      adminKosong.style.display = "block";
+      adminInfo.textContent = "";
+      return;
+    }
+    adminKosong.style.display = "none";
+    adminInfo.textContent = "Total pendaftar: " + dataPendaftar.length + " orang.";
+    dataPendaftar.forEach(function (d, i) {
+      var tr = document.createElement("tr");
+      var sel = [
+        i + 1, d.nama, d.whatsapp, d.email || "-", d.program,
+        d.paket || "-", d.alamat || "-", d.pesan || "-", formatTanggal(d.dibuat_pada),
+      ];
+      sel.forEach(function (t) {
+        var td = document.createElement("td");
+        td.textContent = t;
+        tr.appendChild(td);
+      });
+      tabelBody.appendChild(tr);
+    });
+  }
+
+  function eksporCSV() {
+    if (!dataPendaftar.length) return;
+    var kolom = ["No", "Nama", "WhatsApp", "Email", "Program", "Paket", "Alamat", "Pesan", "Dibuat Pada"];
+    var baris = [kolom];
+    dataPendaftar.forEach(function (d, i) {
+      baris.push([i + 1, d.nama, d.whatsapp, d.email || "", d.program, d.paket || "", d.alamat || "", d.pesan || "", formatTanggal(d.dibuat_pada)]);
+    });
+    var csv = baris
+      .map(function (r) {
+        return r
+          .map(function (c) {
+            return '"' + String(c).replace(/"/g, '""') + '"';
+          })
+          .join(",");
+      })
+      .join("\n");
+    var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "pendaftaran-drwacademy.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function ambilData() {
+    var password = inputPassword.value.trim();
+    if (!password) {
+      loginStatus.className = "form-status is-error";
+      loginStatus.textContent = "Password wajib diisi.";
+      return;
+    }
+    fetch("/api/pendaftaran?password=" + encodeURIComponent(password))
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.berhasil) {
+          dataPendaftar = res.data || [];
+          panelLogin.style.display = "none";
+          panelData.style.display = "block";
+          renderTabel();
+        } else {
+          loginStatus.className = "form-status is-error";
+          loginStatus.textContent = res.pesan || "Gagal masuk.";
+        }
+      })
+      .catch(function () {
+        loginStatus.className = "form-status is-error";
+        loginStatus.textContent = "Server tidak terjangkau.";
+      });
+  }
+
+  btnLogin.addEventListener("click", ambilData);
+  inputPassword.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") ambilData();
+  });
+
+  btnKeluar.addEventListener("click", function () {
+    dataPendaftar = [];
+    inputPassword.value = "";
+    loginStatus.className = "form-status";
+    loginStatus.textContent = "";
+    panelData.style.display = "none";
+    panelLogin.style.display = "block";
+  });
+
+  btnEkspor.addEventListener("click", eksporCSV);
+
+  var yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
