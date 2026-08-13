@@ -7,188 +7,816 @@
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="../assets/img/logo.png">
   <style>
-    .admin-login {
-      max-width: 420px;
-      margin: 80px auto;
-      padding: 40px;
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card);
-      text-align: center;
+    :root {
+      --primary: #0274be;
+      --magenta: #b135a1;
+      --dark: #3a3a3a;
+      --body: #4b4f58;
+      --light: #f5f5f5;
+      --white: #ffffff;
+      --border: #e2e5e9;
+      --radius: 12px;
+      --shadow: 0 10px 40px rgba(22, 34, 51, 0.08);
     }
-    .admin-login input {
-      width: 100%;
-      margin: 12px 0 16px;
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: linear-gradient(180deg, #f6f8fa 0%, #eef1f5 100%);
+      color: var(--body);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
     }
-    .admin-head {
+
+    /* ---------- Login ---------- */
+    .login-wrap {
+      min-height: 100vh;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 44px 40px;
+      text-align: center;
+    }
+
+    .login-card .logo-badge {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 20px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #0274be, #4aa3df);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(2, 116, 190, 0.3);
+    }
+
+    .login-card .logo-badge img {
+      width: 52px;
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .login-card h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 24px;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+
+    .login-card .sub {
+      font-size: 14px;
+      color: #8a9099;
+      margin-bottom: 26px;
+    }
+
+    .field-pass {
+      position: relative;
+    }
+
+    .field-pass input {
+      width: 100%;
+      padding: 14px 46px 14px 18px;
+      font-family: inherit;
+      font-size: 15px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field-pass input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(2, 116, 190, 0.12);
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+      color: #8a9099;
+    }
+
+    .toggle-pass svg { width: 20px; height: 20px; fill: currentColor; display: block; }
+
+    .login-status {
+      display: none;
+      font-size: 13.5px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-align: left;
+    }
+    .login-status.is-error { display: block; background: #fdeeee; color: #b33838; }
+    .login-status.is-loading { display: block; background: #eef5fd; color: var(--primary); }
+
+    .login-card .btn-masuk {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0274be, #4aa3df);
+      color: var(--white);
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .login-card .btn-masuk:hover { opacity: 0.92; }
+    .login-card .btn-masuk:active { transform: scale(0.98); }
+    .login-card .btn-masuk:disabled { opacity: 0.6; cursor: wait; }
+
+    /* ---------- Topbar ---------- */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
       gap: 16px;
-      flex-wrap: wrap;
+    }
+
+    .topbar .logo-mini {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0274be, #4aa3df);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .topbar .logo-mini img { width: 28px; filter: brightness(0) invert(1); }
+
+    .topbar h1 {
+      font-family: "Playfair Display", serif;
+      font-size: 19px;
+      color: var(--dark);
+      flex: 1;
+    }
+
+    .topbar h1 small {
+      font-family: "Inter", sans-serif;
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #8a9099;
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-icon svg { width: 16px; height: 16px; fill: currentColor; }
+    .btn-icon.btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--white);
+    }
+    .btn-icon.btn-primary:hover { opacity: 0.9; }
+    .btn-icon.btn-danger:hover { border-color: #c33; color: #c33; }
+
+    /* ---------- Konten ---------- */
+    .main-admin {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
       margin-bottom: 24px;
     }
-    .admin-head h2 { font-size: 26px; }
-    .admin-info { font-size: 14px; color: var(--body); margin-bottom: 16px; }
-    .admin-table-wrap { overflow-x: auto; }
-    .admin-table {
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-card .ico {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-card .ico svg { width: 22px; height: 22px; fill: var(--white); }
+    .stat-card .ico.blue { background: linear-gradient(135deg, #0274be, #4aa3df); }
+    .stat-card .ico.magenta { background: linear-gradient(135deg, #b135a1, #d97bc9); }
+    .stat-card .ico.gold { background: linear-gradient(135deg, #b3811c, #e0b64f); }
+
+    .stat-card .angka {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.1;
+    }
+    .stat-card .label-stat {
+      font-size: 13px;
+      color: #8a9099;
+    }
+
+    .panel {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--light);
+      flex-wrap: wrap;
+    }
+
+    .toolbar .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .toolbar .search-box svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: #8a9099;
+    }
+
+    .toolbar .search-box input {
+      width: 100%;
+      padding: 10px 14px 10px 40px;
+      font-family: inherit;
+      font-size: 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+    .toolbar .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .toolbar .hasil {
+      font-size: 13px;
+      color: #8a9099;
+    }
+
+    /* ---------- Tabel ---------- */
+    .table-wrap { overflow-x: auto; }
+
+    table.data-table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
       font-size: 14px;
+      min-width: 900px;
     }
-    .admin-table th,
-    .admin-table td {
-      padding: 12px 14px;
+
+    table.data-table thead th {
+      position: sticky;
+      top: 0;
+      background: #f8fafc;
+      color: #6b7280;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 13px 16px;
       text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    table.data-table tbody td {
+      padding: 14px 16px;
       border-bottom: 1px solid var(--light);
       vertical-align: top;
     }
-    .admin-table th {
-      background: var(--primary);
-      color: var(--white);
-      font-weight: 500;
+
+    table.data-table tbody tr:hover { background: #f8fbff; }
+    table.data-table tbody tr:last-child td { border-bottom: none; }
+
+    td.nama { font-weight: 600; color: var(--dark); }
+
+    .badge-baru {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: #e8f6ee;
+      color: #1d7a44;
+      border-radius: 20px;
+      padding: 3px 9px;
+      margin-left: 8px;
       white-space: nowrap;
     }
-    .admin-table tr:last-child td { border-bottom: none; }
-    .admin-empty {
+
+    .badge-program {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--white);
+      border-radius: 20px;
+      padding: 4px 12px;
+      white-space: nowrap;
+    }
+    .badge-program.b-makeup { background: #b135a1; }
+    .badge-program.b-skin { background: #0f7a72; }
+    .badge-program.b-hair { background: #b3811c; }
+    .badge-program.b-spa { background: #5e35b1; }
+    .badge-program.b-nail { background: #ad4a6d; }
+    .badge-program.b-other { background: #0274be; }
+
+    td.waktu { color: #8a9099; white-space: nowrap; font-size: 13px; }
+
+    .aksi { display: flex; gap: 8px; }
+
+    .chip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .chip-btn svg { width: 14px; height: 14px; fill: currentColor; }
+    .chip-btn.wa {
+      background: #25d366;
+      border-color: #25d366;
+      color: var(--white);
+      padding: 6px 14px;
+    }
+    .chip-btn.wa:hover { background: #1d7a44; border-color: #1d7a44; color: var(--white); }
+    .chip-btn.copy:hover { border-color: var(--primary); color: var(--primary); }
+    .chip-btn.copied { border-color: #1d7a44; color: #1d7a44; }
+
+    .empty-state {
       text-align: center;
-      padding: 48px 0;
-      color: var(--body);
+      padding: 70px 20px;
+      color: #8a9099;
+    }
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      fill: #d5dae0;
+      margin-bottom: 14px;
+    }
+    .empty-state h3 { font-family: "Playfair Display", serif; color: var(--dark); font-size: 19px; margin-bottom: 6px; }
+
+    .load-more {
+      display: block;
+      margin: 22px auto 4px;
+      padding: 11px 28px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .load-more:hover { border-color: var(--primary); }
+
+    .foot-admin {
+      text-align: center;
+      font-size: 12.5px;
+      color: #a0a6ad;
+      padding: 24px 0 8px;
+    }
+
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .topbar-inner { flex-wrap: wrap; }
+      .topbar h1 { flex: 1; min-width: 160px; }
+      .btn-icon span { display: none; }
+      .btn-icon { padding: 9px 12px; }
     }
   </style>
 </head>
 <body>
 
-<header class="site-header" data-transparent="false">
-  <div class="container header-inner">
-    <a class="brand" href="../index.html" aria-label="LPK DRW Academy">
+<!-- ================= LOGIN ================= -->
+<div class="login-wrap" id="panel-login">
+  <div class="login-card">
+    <div class="logo-badge">
       <img src="../assets/img/logo.png" alt="Logo LPK DRW Academy">
-    </a>
-  </div>
-</header>
-
-<main class="section" style="padding: 60px 0;">
-  <div class="container">
-
-    <div class="admin-login" id="panel-login">
-      <h2 style="margin-bottom: 8px;">Admin Pendaftaran</h2>
-      <p style="margin-bottom: 16px; font-size: 15px;">Masukkan password untuk melihat data pendaftar.</p>
-      <input type="password" id="input-password" placeholder="Password" style="display:block; width:100%; padding:12px 14px; border:1px solid var(--border); border-radius: var(--radius); font-family:inherit; font-size:15px;">
-      <div id="login-status" class="form-status"></div>
-      <button class="btn" id="btn-login">Masuk</button>
     </div>
+    <h1>Admin Pendaftaran</h1>
+    <p class="sub">LPK DRW Academy — masukkan password untuk melihat data pendaftar.</p>
+    <div class="field-pass">
+      <input type="password" id="input-password" placeholder="Password" autocomplete="current-password">
+      <button class="toggle-pass" id="btn-toggle-pass" type="button" aria-label="Tampilkan/sembunyikan password">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>
+      </button>
+    </div>
+    <div id="login-status" class="login-status"></div>
+    <button class="btn-masuk" id="btn-login" type="button">Masuk</button>
+  </div>
+</div>
 
-    <div id="panel-data" style="display: none;">
-      <div class="admin-head">
-        <h2>Data Pendaftar</h2>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn" id="btn-ekspor">Export CSV</button>
-          <button class="btn btn-magenta" id="btn-keluar">Keluar</button>
+<!-- ================= DATA ================= -->
+<div id="panel-data" style="display: none;">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="logo-mini">
+        <img src="../assets/img/logo.png" alt="">
+      </div>
+      <h1>Data Pendaftar
+        <small id="sub-judul">LPK DRW Academy</small>
+      </h1>
+      <button class="btn-icon" id="btn-refresh" type="button">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.96 7.96 0 0 0 12 4a8 8 0 1 0 7.73 10h-2.08A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        <span>Refresh</span>
+      </button>
+      <button class="btn-icon btn-primary" id="btn-ekspor" type="button">
+        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        <span>Export CSV</span>
+      </button>
+      <button class="btn-icon btn-danger" id="btn-keluar" type="button">
+        <svg viewBox="0 0 24 24"><path d="M10.09 15.59 11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5a2 2 0 0 0-2 2v4h2V5h14v14H5v-4H3v4a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-admin">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="ico blue">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <div>
+          <div class="angka" id="stat-total">0</div>
+          <div class="label-stat">Total Pendaftar</div>
         </div>
       </div>
-      <p class="admin-info" id="admin-info"></p>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
+      <div class="stat-card">
+        <div class="ico magenta">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+        </div>
+        <div>
+          <div class="angka" id="stat-hari-ini">0</div>
+          <div class="label-stat">Pendaftar Hari Ini</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="ico gold">
+          <svg viewBox="0 0 24 24"><path d="M12 2l2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2zM19 15l1.3 3.2 3.2 1.3-3.2 1.3L19 24l-1.3-3.2-3.2-1.3 3.2-1.3z"/></svg>
+        </div>
+        <div>
+          <div class="angka" id="stat-program" style="font-size: 17px;">—</div>
+          <div class="label-stat">Program Terbanyak</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+          <input type="search" id="input-cari" placeholder="Cari nama, WhatsApp, atau program...">
+        </div>
+        <span class="hasil" id="info-hasil"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
           <thead>
             <tr>
               <th>No</th>
               <th>Nama</th>
               <th>WhatsApp</th>
-              <th>Email</th>
               <th>Program</th>
               <th>Paket</th>
-              <th>Alamat</th>
-              <th>Pesan</th>
-              <th>Dibuat Pada</th>
+              <th>Dibuat</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody id="tabel-body"></tbody>
         </table>
       </div>
-      <p class="admin-empty" id="admin-kosong" style="display:none;">Belum ada data pendaftar.</p>
+
+      <div class="empty-state" id="panel-kosong" style="display: none;">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM10 4h4v2h-4zm10 16H4V8h16z"/></svg>
+        <h3>Belum ada data pendaftar</h3>
+        <p>Data dari form /daftar/ akan muncul di sini.</p>
+      </div>
     </div>
 
-  </div>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-bottom">
-    <div class="container">
-      Copyright © <span id="year">2026</span> &nbsp; Support By DRW Skincare
+    <div style="text-align: center;">
+      <button class="load-more" id="btn-muat" type="button" style="display: none;">Muat Lebih Banyak</button>
     </div>
-  </div>
-</footer>
+
+    <p class="foot-admin">LPK DRW Academy — Copyright © <span id="year">2026</span> Support By DRW Skincare</p>
+  </main>
+</div>
 
 <script>
 (function () {
   "use strict";
+
+  var KUNCI_LOGIN = "drw_admin_password";
+  var PER_HALAMAN = 25;
 
   var panelLogin = document.getElementById("panel-login");
   var panelData = document.getElementById("panel-data");
   var inputPassword = document.getElementById("input-password");
   var loginStatus = document.getElementById("login-status");
   var btnLogin = document.getElementById("btn-login");
+  var btnTogglePass = document.getElementById("btn-toggle-pass");
   var btnEkspor = document.getElementById("btn-ekspor");
   var btnKeluar = document.getElementById("btn-keluar");
+  var btnRefresh = document.getElementById("btn-refresh");
+  var btnMuat = document.getElementById("btn-muat");
   var tabelBody = document.getElementById("tabel-body");
-  var adminInfo = document.getElementById("admin-info");
-  var adminKosong = document.getElementById("admin-kosong");
+  var panelKosong = document.getElementById("panel-kosong");
+  var infoHasil = document.getElementById("info-hasil");
+  var inputCari = document.getElementById("input-cari");
+  var subJudul = document.getElementById("sub-judul");
+  var statTotal = document.getElementById("stat-total");
+  var statHariIni = document.getElementById("stat-hari-ini");
+  var statProgram = document.getElementById("stat-program");
 
   var dataPendaftar = [];
-  var KUNCI_LOGIN = "drw_admin_password";
+  var dataTampil = [];
+  var batasTampil = PER_HALAMAN;
 
-  function formatTanggal(iso) {
+  /* ---------- util ---------- */
+  function esc(t) {
+    var d = document.createElement("div");
+    d.textContent = t == null ? "" : String(t);
+    return d.innerHTML;
+  }
+
+  function formatWaktu(iso) {
     if (!iso) return "-";
     var d = new Date(iso);
-    return d.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+    var selisih = (Date.now() - d.getTime()) / 1000;
+    if (selisih < 60) return "Baru saja";
+    if (selisih < 3600) return Math.floor(selisih / 60) + " menit lalu";
+    if (selisih < 86400) return Math.floor(selisih / 3600) + " jam lalu";
+    if (selisih < 604800) return Math.floor(selisih / 86400) + " hari lalu";
+    return d.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  }
+
+  function formatTanggalLengkap(iso) {
+    if (!iso) return "-";
+    return new Date(iso).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+  }
+
+  function nomorWa(wa) {
+    var angka = String(wa || "").replace(/\D/g, "");
+    if (angka.indexOf("0") === 0) angka = "62" + angka.slice(1);
+    if (angka.indexOf("8") === 0) angka = "62" + angka;
+    return angka;
+  }
+
+  function kelasProgram(program) {
+    var p = String(program || "").toLowerCase();
+    if (p.includes("makeup") || p.includes("sulam") || p.includes("eyelash")) return "b-makeup";
+    if (p.includes("skin") || p.includes("wajah")) return "b-skin";
+    if (p.includes("hair") || p.includes("rambut")) return "b-hair";
+    if (p.includes("spa") || p.includes("aromaterapi") || p.includes("terapi")) return "b-spa";
+    if (p.includes("nail") || p.includes("kuku")) return "b-nail";
+    return "b-other";
+  }
+
+  function isBaru(iso) {
+    return iso && Date.now() - new Date(iso).getTime() < 86400000;
+  }
+
+  /* ---------- render ---------- */
+  function renderStats() {
+    statTotal.textContent = dataPendaftar.length;
+    var hariIni = dataPendaftar.filter(function (d) {
+      return d.dibuat_pada && new Date(d.dibuat_pada).toDateString() === new Date().toDateString();
+    }).length;
+    statHariIni.textContent = hariIni;
+
+    var hitung = {};
+    dataPendaftar.forEach(function (d) {
+      var k = d.program || "Lainnya";
+      hitung[k] = (hitung[k] || 0) + 1;
+    });
+    var top = null;
+    Object.keys(hitung).forEach(function (k) {
+      if (!top || hitung[k] > hitung[top]) top = k;
+    });
+    statProgram.textContent = top || "—";
   }
 
   function renderTabel() {
     tabelBody.innerHTML = "";
-    if (!dataPendaftar.length) {
-      adminKosong.style.display = "block";
-      adminInfo.textContent = "";
+    batasTampil = PER_HALAMAN;
+
+    if (!dataTampil.length) {
+      panelKosong.style.display = "block";
+      infoHasil.textContent = "";
+      btnMuat.style.display = "none";
       return;
     }
-    adminKosong.style.display = "none";
-    adminInfo.textContent = "Total pendaftar: " + dataPendaftar.length + " orang.";
-    dataPendaftar.forEach(function (d, i) {
+    panelKosong.style.display = "none";
+
+    var list = dataTampil.slice(0, batasTampil);
+    list.forEach(function (d, i) {
       var tr = document.createElement("tr");
-      var sel = [
-        i + 1, d.nama, d.whatsapp, d.email || "-", d.program,
-        d.paket || "-", d.alamat || "-", d.pesan || "-", formatTanggal(d.dibuat_pada),
-      ];
-      sel.forEach(function (t) {
-        var td = document.createElement("td");
-        td.textContent = t;
-        tr.appendChild(td);
+
+      var tdNo = document.createElement("td");
+      tdNo.textContent = dataPendaftar.indexOf(d) + 1;
+      tr.appendChild(tdNo);
+
+      var tdNama = document.createElement("td");
+      tdNama.className = "nama";
+      tdNama.innerHTML = esc(d.nama) + (isBaru(d.dibuat_pada) ? '<span class="badge-baru">BARU</span>' : "");
+      if (d.alamat) {
+        var kecil = document.createElement("div");
+        kecil.style.cssText = "font-size:12.5px;color:#8a9099;font-weight:400;margin-top:2px;";
+        kecil.textContent = d.alamat;
+        tdNama.appendChild(kecil);
+      }
+      tr.appendChild(tdNama);
+
+      var tdWa = document.createElement("td");
+      tdWa.textContent = d.whatsapp || "-";
+      tr.appendChild(tdWa);
+
+      var tdProg = document.createElement("td");
+      var badge = document.createElement("span");
+      badge.className = "badge-program " + kelasProgram(d.program);
+      badge.textContent = d.program || "-";
+      tdProg.appendChild(badge);
+      if (d.pesan) {
+        var cat = document.createElement("div");
+        cat.style.cssText = "font-size:12.5px;color:#8a9099;margin-top:6px;max-width:260px;";
+        cat.textContent = d.pesan;
+        tdProg.appendChild(cat);
+      }
+      tr.appendChild(tdProg);
+
+      var tdPaket = document.createElement("td");
+      tdPaket.textContent = d.paket || "-";
+      tr.appendChild(tdPaket);
+
+      var tdWaktu = document.createElement("td");
+      tdWaktu.className = "waktu";
+      tdWaktu.textContent = formatWaktu(d.dibuat_pada);
+      tdWaktu.title = formatTanggalLengkap(d.dibuat_pada);
+      tr.appendChild(tdWaktu);
+
+      var tdAksi = document.createElement("td");
+      var aksi = document.createElement("div");
+      aksi.className = "aksi";
+
+      var linkWa = document.createElement("a");
+      linkWa.className = "chip-btn wa";
+      linkWa.href = "https://wa.me/" + nomorWa(d.whatsapp);
+      linkWa.target = "_blank";
+      linkWa.rel = "noopener";
+      linkWa.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>Chat WA';
+      aksi.appendChild(linkWa);
+
+      var btnCopy = document.createElement("button");
+      btnCopy.className = "chip-btn copy";
+      btnCopy.type = "button";
+      btnCopy.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>Salin';
+      btnCopy.addEventListener("click", function () {
+        var sukses = false;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(
+              "Nama: " + d.nama + "\nWA: " + d.whatsapp + "\nProgram: " + (d.program || "-") +
+              "\nPaket: " + (d.paket || "-") + "\nAlamat: " + (d.alamat || "-") +
+              "\nPesan: " + (d.pesan || "-")
+            );
+            sukses = true;
+          }
+        } catch (e) {}
+        if (sukses) {
+          btnCopy.classList.add("copied");
+          btnCopy.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Tersalin';
+          setTimeout(function () {
+            btnCopy.classList.remove("copied");
+            btnCopy.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/></svg>Salin';
+          }, 1800);
+        }
       });
+      aksi.appendChild(btnCopy);
+
+      tdAksi.appendChild(aksi);
+      tr.appendChild(tdAksi);
+
       tabelBody.appendChild(tr);
     });
+
+    if (dataTampil.length > batasTampil) {
+      btnMuat.style.display = "inline-block";
+    } else {
+      btnMuat.style.display = "none";
+    }
+
+    infoHasil.textContent = dataTampil.length + " pendaftar" +
+      (inputCari.value ? ' untuk "' + inputCari.value + '"' : "");
   }
 
+  function terapkanFilter() {
+    var q = inputCari.value.trim().toLowerCase();
+    if (!q) {
+      dataTampil = dataPendaftar.slice();
+    } else {
+      dataTampil = dataPendaftar.filter(function (d) {
+        return (
+          (d.nama || "").toLowerCase().includes(q) ||
+          (d.whatsapp || "").toLowerCase().includes(q) ||
+          (d.program || "").toLowerCase().includes(q) ||
+          (d.paket || "").toLowerCase().includes(q) ||
+          (d.alamat || "").toLowerCase().includes(q)
+        );
+      });
+    }
+    renderTabel();
+  }
+
+  /* ---------- ekspor CSV ---------- */
   function eksporCSV() {
-    if (!dataPendaftar.length) return;
+    var list = dataTampil.length ? dataTampil : dataPendaftar;
+    if (!list.length) return;
     var kolom = ["No", "Nama", "WhatsApp", "Email", "Program", "Paket", "Alamat", "Pesan", "Dibuat Pada"];
     var baris = [kolom];
-    dataPendaftar.forEach(function (d, i) {
-      baris.push([i + 1, d.nama, d.whatsapp, d.email || "", d.program, d.paket || "", d.alamat || "", d.pesan || "", formatTanggal(d.dibuat_pada)]);
+    list.forEach(function (d, i) {
+      baris.push([
+        dataPendaftar.indexOf(d) + 1, d.nama, d.whatsapp, d.email || "",
+        d.program || "", d.paket || "", d.alamat || "", d.pesan || "",
+        formatTanggalLengkap(d.dibuat_pada),
+      ]);
     });
     var csv = baris
       .map(function (r) {
-        return r
-          .map(function (c) {
-            return '"' + String(c).replace(/"/g, '""') + '"';
-          })
-          .join(",");
+        return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(",");
       })
       .join("\n");
     var blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
@@ -199,57 +827,104 @@
     URL.revokeObjectURL(a.href);
   }
 
-  function ambilData() {
-    var password = inputPassword.value.trim();
-    if (!password) {
-      loginStatus.className = "form-status is-error";
-      loginStatus.textContent = "Password wajib diisi.";
-      return;
-    }
+  /* ---------- fetch data ---------- */
+  function ambilData(password) {
+    loginStatus.className = "login-status is-loading";
+    loginStatus.textContent = "Memuat data...";
+    btnLogin.disabled = true;
+
     fetch("/api/pendaftaran?password=" + encodeURIComponent(password))
       .then(function (r) { return r.json(); })
       .then(function (res) {
         if (res.berhasil) {
           dataPendaftar = res.data || [];
+          dataTampil = dataPendaftar.slice();
           try {
             localStorage.setItem(KUNCI_LOGIN, password);
           } catch (e) {}
+          subJudul.textContent = "Total " + dataPendaftar.length + " pendaftar";
           panelLogin.style.display = "none";
           panelData.style.display = "block";
+          renderStats();
           renderTabel();
         } else {
-          loginStatus.className = "form-status is-error";
+          loginStatus.className = "login-status is-error";
           loginStatus.textContent = res.pesan || "Gagal masuk.";
+          btnLogin.disabled = false;
         }
       })
       .catch(function () {
-        loginStatus.className = "form-status is-error";
+        loginStatus.className = "login-status is-error";
         loginStatus.textContent = "Server tidak terjangkau.";
+        btnLogin.disabled = false;
       });
   }
 
-  btnLogin.addEventListener("click", ambilData);
+  /* ---------- event ---------- */
+  btnLogin.addEventListener("click", function () {
+    var p = inputPassword.value.trim();
+    if (!p) {
+      loginStatus.className = "login-status is-error";
+      loginStatus.textContent = "Password wajib diisi.";
+      return;
+    }
+    ambilData(p);
+  });
+
   inputPassword.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") ambilData();
+    if (e.key === "Enter") btnLogin.click();
+  });
+
+  btnTogglePass.addEventListener("click", function () {
+    var tipe = inputPassword.type === "password" ? "text" : "password";
+    inputPassword.type = tipe;
+    this.innerHTML = tipe === "password"
+      ? '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>'
+      : '<svg viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 4.85 4.85 0 0 1-.36 1.83l2.92 2.92A11.82 11.82 0 0 0 23 12c-1.7-4.4-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16A4.85 4.85 0 0 1 12 7zM2 4.27l2.28 2.28.46.46A11.8 11.8 0 0 0 1 12c1.7 4.4 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55A2.82 2.82 0 0 0 9 12a3 3 0 0 0 3 3c.22 0 .43-.05.65-.07l1.55 1.55A5.02 5.02 0 0 1 7.53 9.8zm4.31-.78l3.15 3.15.02-.16a3 3 0 0 0-3-3l-.17.01z"/></svg>';
   });
 
   btnKeluar.addEventListener("click", function () {
     dataPendaftar = [];
+    dataTampil = [];
     inputPassword.value = "";
     try {
       localStorage.removeItem(KUNCI_LOGIN);
     } catch (e) {}
-    loginStatus.className = "form-status";
+    loginStatus.className = "login-status";
     loginStatus.textContent = "";
+    btnLogin.disabled = false;
     panelData.style.display = "none";
-    panelLogin.style.display = "block";
+    panelLogin.style.display = "flex";
+  });
+
+  btnRefresh.addEventListener("click", function () {
+    var p = inputPassword.value || "";
+    if (!p) {
+      try { p = localStorage.getItem(KUNCI_LOGIN) || ""; } catch (e) {}
+    }
+    if (p) ambilData(p);
+  });
+
+  btnMuat.addEventListener("click", function () {
+    batasTampil += PER_HALAMAN;
+    renderTabel();
   });
 
   btnEkspor.addEventListener("click", eksporCSV);
 
+  inputCari.addEventListener("input", function () {
+    clearTimeout(this._t);
+    var self = this;
+    this._t = setTimeout(function () {
+      batasTampil = PER_HALAMAN;
+      terapkanFilter();
+    }, 200);
+  });
+
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  /* ---------- auto login ---------- */
   (function cobaLoginOtomatis() {
     var tersimpan = null;
     try {
@@ -257,7 +932,7 @@
     } catch (e) {}
     if (tersimpan) {
       inputPassword.value = tersimpan;
-      ambilData();
+      ambilData(tersimpan);
     }
   })();
 })();
