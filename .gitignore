@@ -3,3 +3,6 @@ basisdata.sqlite
 basisdata.sqlite-shm
 basisdata.sqlite-wal
 .vercel/
+
+# catatan berisi kredensial - jangan di-commit
+NOTE
