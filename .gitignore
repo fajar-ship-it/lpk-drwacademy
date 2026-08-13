@@ -2,3 +2,4 @@ node_modules/
 basisdata.sqlite
 basisdata.sqlite-shm
 basisdata.sqlite-wal
+.vercel/

@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
-const { siapkanBasisdata, simpanPendaftaran, ambilPendaftaran } = require("./basisdata");
+const { siapkanBasisdata } = require("./basisdata");
+const { simpanPendaftaran, ambilPendaftaran } = require("./lib/pendaftaran");
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "drwadmin2026";
@@ -16,7 +17,7 @@ function bersihkan(teks) {
 }
 
 // ── POST /api/pendaftaran ────────────────────────────
-app.post("/api/pendaftaran", (req, res) => {
+app.post("/api/pendaftaran", async (req, res) => {
   try {
     const b = req.body || {};
 
@@ -34,7 +35,7 @@ app.post("/api/pendaftaran", (req, res) => {
         .json({ berhasil: false, pesan: "Nama, WhatsApp, dan Program wajib diisi." });
     }
 
-    const hasil = simpanPendaftaran({
+    const hasil = await simpanPendaftaran({
       nama,
       whatsapp,
       email: bersihkan(b.email),
@@ -47,7 +48,7 @@ app.post("/api/pendaftaran", (req, res) => {
     res.json({
       berhasil: true,
       pesan: "Pendaftaran berhasil dikirim. Admin akan menghubungi Anda via WhatsApp.",
-      id: hasil.lastInsertRowid,
+      id: hasil.lastInsertRowid || null,
     });
   } catch (err) {
     console.error("[ERROR]", err.message);
@@ -56,12 +57,18 @@ app.post("/api/pendaftaran", (req, res) => {
 });
 
 // ── GET /api/pendaftaran (admin) ─────────────────────
-app.get("/api/pendaftaran", (req, res) => {
-  const password = String(req.query.password || "");
-  if (password !== ADMIN_PASSWORD) {
-    return res.status(401).json({ berhasil: false, pesan: "Password salah." });
+app.get("/api/pendaftaran", async (req, res) => {
+  try {
+    const password = String(req.query.password || "");
+    if (password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ berhasil: false, pesan: "Password salah." });
+    }
+    const data = await ambilPendaftaran();
+    res.json({ berhasil: true, data });
+  } catch (err) {
+    console.error("[ERROR]", err.message);
+    res.status(500).json({ berhasil: false, pesan: "Terjadi kesalahan server." });
   }
-  res.json({ berhasil: true, data: ambilPendaftaran() });
 });
 
 app.listen(PORT, () => {
