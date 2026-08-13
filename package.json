@@ -2,12 +2,11 @@
   "name": "lpk-drwacademy",
   "version": "1.0.0",
   "private": true,
-  "description": "Situs LPK DRW Academy dengan form pendaftaran (Express + SQLite)",
-  "main": "server.js",
+  "description": "Situs LPK DRW Academy dengan form pendaftaran (Express + SQLite lokal / Supabase di Vercel)",
   "scripts": {
     "start": "node server.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "better-sqlite3": "^11.10.0",
     "express": "^5.2.1"
   }

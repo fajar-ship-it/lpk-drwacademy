@@ -10,7 +10,11 @@ const app = express();
 app.use(express.json({ limit: "64kb" }));
 app.use(express.static(path.join(__dirname, ".")));
 
-siapkanBasisdata();
+try {
+  siapkanBasisdata();
+} catch (err) {
+  console.error("[PERINGATAN] Database lokal tidak bisa dibuka:", err.message);
+}
 
 function bersihkan(teks) {
   return typeof teks === "string" ? teks.replace(/<[^>]*>/g, "").trim().slice(0, 500) : "";
